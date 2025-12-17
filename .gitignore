@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# MLflow
+mlruns/
+
+# Models
+models/*.pkl
+
+# Data (sera géré par DVC)
+data/*.csv
+
+# OS
+.DS_Store
+Thumbs.db

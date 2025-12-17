@@ -1,0 +1,16 @@
+/config.local
+/tmp
+/cache
+# Python
+.venv/
+__pycache__/
+
+# MLflow
+mlruns/
+
+# DVC cache
+.dvc/cache/
+
+# OS
+*.log
+
