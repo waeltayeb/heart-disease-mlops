@@ -1,0 +1,28 @@
+version: "3.9"
+
+services:
+
+  api:
+    build: .
+    container_name: heart_api
+    ports:
+      - "8080:8080"
+    volumes:
+      - monitoring_data:/app/monitoring/data
+    restart: always
+
+  monitoring:
+    build:
+      context: .
+      dockerfile: monitoring/Dockerfile
+    container_name: heart_monitoring
+    volumes:
+      - monitoring_data:/app/monitoring/data
+      - monitoring_reports:/app/monitoring/reports
+    depends_on:
+      - api
+    restart: always
+
+volumes:
+  monitoring_data:
+  monitoring_reports:

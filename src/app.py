@@ -34,7 +34,7 @@ def predict():
     prediction = model.predict(input_scaled)[0]
 
     result = (
-        "⚠️ Maladie cardiaque détectée "
+        "Maladie cardiaque détectée"
         if prediction == 0
         else "✅ Pas de maladie cardiaque"
     )

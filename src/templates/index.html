@@ -1,27 +1,635 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-    <title>Heart Disease Prediction</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prédiction de Maladies Cardiaques</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #e63946;
+            --primary-dark: #c1121f;
+            --secondary: #1d3557;
+            --light: #f1faee;
+            --accent: #a8dadc;
+            --success: #2a9d8f;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --radius: 12px;
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            background-image: linear-gradient(135deg, #f5f7fa 0%, #eef2f7 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 20px;
+            background-color: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+        
+        h1 {
+            color: var(--secondary);
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .heart-icon {
+            color: var(--primary);
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            animation: heartbeat 1.5s infinite;
+        }
+        
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            5% { transform: scale(1.1); }
+            10% { transform: scale(1); }
+            15% { transform: scale(1.1); }
+            20% { transform: scale(1); }
+            100% { transform: scale(1); }
+        }
+        
+        .form-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .form-card {
+            flex: 1;
+            min-width: 300px;
+            background-color: white;
+            border-radius: var(--radius);
+            padding: 30px;
+            box-shadow: var(--shadow);
+        }
+        
+        .info-card {
+            flex: 1;
+            min-width: 300px;
+            background-color: white;
+            border-radius: var(--radius);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            background-color: var(--secondary);
+            color: white;
+        }
+        
+        .form-title {
+            color: var(--secondary);
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--accent);
+            font-size: 1.8rem;
+        }
+        
+        .info-title {
+            color: white;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--accent);
+            font-size: 1.8rem;
+        }
+        
+        .form-group {
+            margin-bottom: 22px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--secondary);
+        }
+        
+        .input-wrapper {
+            position: relative;
+        }
+        
+        input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: var(--transition);
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(168, 218, 220, 0.3);
+        }
+        
+        .input-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #888;
+        }
+        
+        .range-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .info-list {
+            list-style-type: none;
+        }
+        
+        .info-list li {
+            margin-bottom: 18px;
+            padding-left: 30px;
+            position: relative;
+        }
+        
+        .info-list i {
+            position: absolute;
+            left: 0;
+            top: 2px;
+            color: var(--accent);
+        }
+        
+        .btn-submit {
+            display: block;
+            width: 100%;
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            padding: 18px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 20px;
+            letter-spacing: 1px;
+        }
+        
+        .btn-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(230, 57, 70, 0.3);
+        }
+        
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+        
+        .btn-submit i {
+            margin-right: 10px;
+        }
+
+        /* Styles pour les listes déroulantes */
+select {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: var(--transition);
+    background-color: white;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+}
+
+select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(168, 218, 220, 0.3);
+}
+
+.select-wrapper {
+    position: relative;
+}
+
+.select-wrapper::after {
+    content: '\f078';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    position: absolute;
+    right: 45px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Style pour les unités de mesure */
+.with-unit {
+    position: relative;
+}
+
+.input-unit {
+    position: absolute;
+    right: 45px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+    font-size: 14px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 2px 8px;
+    border-radius: 4px;
+    pointer-events: none;
+}
+
+/* Amélioration de l'alignement des icônes avec les selects */
+.select-wrapper .input-icon {
+    right: 15px;
+    z-index: 2;
+}
+
+/* Styles pour les options des selects */
+option {
+    padding: 10px;
+}
+
+option:disabled {
+    color: #999;
+}
+
+/* Style pour les champs numériques avec unité */
+.with-unit input {
+    padding-right: 80px;
+}
+
+/* Amélioration responsive */
+@media (max-width: 768px) {
+    .select-wrapper::after {
+        right: 40px;
+    }
+    
+    .input-unit {
+        right: 40px;
+        font-size: 12px;
+    }
+    
+    .with-unit input {
+        padding-right: 70px;
+    }
+}
+
+/* Animation pour les selects au focus */
+select:focus ~ .input-icon {
+    color: var(--accent);
+}
+
+/* Style pour les selects avec valeur sélectionnée */
+select:valid {
+    border-color: #a8dadc;
+    background-color: #f8fdff;
+}
+
+/* Style pour les options groupées */
+optgroup {
+    font-weight: 600;
+    color: var(--secondary);
+}
+
+optgroup option {
+    font-weight: normal;
+    padding-left: 20px;
+}
+
+/* Effet de transition pour les changements */
+select, input {
+    transition: all 0.3s ease;
+}
+        
+        footer {
+            text-align: center;
+            color: #666;
+            padding: 20px;
+            font-size: 0.9rem;
+            margin-top: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .form-card, .info-card {
+                min-width: 100%;
+            }
+        }
+        
+        /* Style pour les groupes de champs en ligne sur les grands écrans */
+        @media (min-width: 992px) {
+            .form-row {
+                display: flex;
+                gap: 20px;
+            }
+            
+            .form-row .form-group {
+                flex: 1;
+            }
+        }
+        
+        /* Animation pour le formulaire */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .form-card, .info-card {
+            animation: fadeIn 0.8s ease-out;
+        }
+        
+        .info-card {
+            animation-delay: 0.2s;
+        }
+    </style>
 </head>
 <body>
-    <h1>Heart Disease Prediction</h1>
-
-    <form action="/predict" method="post">
-        Age: <input type="number" name="age" required><br>
-        Sex (1=Homme, 0=Femme): <input type="number" name="sex" required><br>
-        Chest Pain Type (0–3): <input type="number" name="cp" required><br>
-        Resting BP: <input type="number" name="trestbps" required><br>
-        Cholesterol: <input type="number" name="chol" required><br>
-        Fasting Blood Sugar (1/0): <input type="number" name="fbs" required><br>
-        Rest ECG (0–2): <input type="number" name="restecg" required><br>
-        Max Heart Rate: <input type="number" name="thalach" required><br>
-        Exercise Induced Angina (1/0): <input type="number" name="exang" required><br>
-        Oldpeak: <input type="number" step="0.1" name="oldpeak" required><br>
-        Slope (0–2): <input type="number" name="slope" required><br>
-        CA (0–4): <input type="number" name="ca" required><br>
-        Thal (1–3): <input type="number" name="thal" required><br>
-
-        <button type="submit">Predict</button>
-    </form>
+    <div class="container">
+        <header>
+            <div class="heart-icon">
+                <i class="fas fa-heartbeat"></i>
+            </div>
+            <h1>Prédiction de Maladies Cardiaques</h1>
+            <p class="subtitle">Entrez les informations médicales ci-dessous pour évaluer le risque de maladie cardiaque. Tous les champs sont requis.</p>
+        </header>
+        
+        <div class="form-container">
+            <div class="form-card">
+                <h2 class="form-title"><i class="fas fa-clipboard-list"></i> Formulaire d'Évaluation</h2>
+                
+               <form action="/predict" method="post">
+    <div class="form-row">
+        <div class="form-group">
+            <label for="age"><i class="fas fa-user"></i> Âge</label>
+            <div class="input-wrapper">
+                <input type="number" id="age" name="age"  required>
+                <span class="input-icon"><i class="fas fa-user"></i></span>
+            </div>
+            <div class="range-info">Valeur attendue: 20-100 ans</div>
+        </div>
+        
+        <div class="form-group">
+            <label for="sex"><i class="fas fa-venus-mars"></i> Sexe</label>
+            <div class="input-wrapper select-wrapper">
+                <select id="sex" name="sex" required>
+                    <option value="">Sélectionnez...</option>
+                    <option value="1">Homme</option>
+                    <option value="0">Femme</option>
+                </select>
+                <span class="input-icon"><i class="fas fa-venus-mars"></i></span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label for="cp"><i class="fas fa-heart"></i> Type de Douleur Thoracique</label>
+        <div class="input-wrapper select-wrapper">
+            <select id="cp" name="cp" required>
+                <option value="">Sélectionnez...</option>
+                <option value="0">Typique (angine stable)</option>
+                <option value="1">Atypique (angine instable)</option>
+                <option value="2">Non angineuse</option>
+                <option value="3">Asymptomatique</option>
+            </select>
+            <span class="input-icon"><i class="fas fa-heart"></i></span>
+        </div>
+    </div>
+    
+    <div class="form-row">
+        <div class="form-group">
+            <label for="trestbps"><i class="fas fa-tachometer-alt"></i> Pression Artérielle au Repos</label>
+            <div class="input-wrapper with-unit">
+                <input type="number" id="trestbps" name="trestbps"  required>
+                <span class="input-unit">mm Hg</span>
+                <span class="input-icon"><i class="fas fa-tachometer-alt"></i></span>
+            </div>
+            <div class="range-info">Normale: 90-120 mm Hg</div>
+        </div>
+        
+        <div class="form-group">
+            <label for="chol"><i class="fas fa-vial"></i> Cholestérol Sérique</label>
+            <div class="input-wrapper with-unit">
+                <input type="number" id="chol" name="chol"required>
+                <span class="input-unit">mg/dl</span>
+                <span class="input-icon"><i class="fas fa-vial"></i></span>
+            </div>
+            <div class="range-info">Normale: < 200 mg/dl</div>
+        </div>
+    </div>
+    
+    <div class="form-row">
+        <div class="form-group">
+            <label for="fbs"><i class="fas fa-syringe"></i> Glycémie à Jeun</label>
+            <div class="input-wrapper select-wrapper">
+                <select id="fbs" name="fbs" required>
+                    <option value="">Sélectionnez...</option>
+                    <option value="0">≤ 120 mg/dl (Normale)</option>
+                    <option value="1">> 120 mg/dl (Élevée)</option>
+                </select>
+                <span class="input-icon"><i class="fas fa-syringe"></i></span>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="restecg"><i class="fas fa-heartbeat"></i> Résultat ECG au Repos</label>
+            <div class="input-wrapper select-wrapper">
+                <select id="restecg" name="restecg" required>
+                    <option value="">Sélectionnez...</option>
+                    <option value="0">Normal</option>
+                    <option value="1">Anomalie onde ST-T</option>
+                    <option value="2">Hypertrophie ventriculaire gauche</option>
+                </select>
+                <span class="input-icon"><i class="fas fa-heartbeat"></i></span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="form-row">
+        <div class="form-group">
+            <label for="thalach"><i class="fas fa-running"></i> Fréquence Cardiaque Maximale</label>
+            <div class="input-wrapper with-unit">
+                <input type="number" id="thalach" name="thalach"  required>
+                <span class="input-unit">bpm</span>
+                <span class="input-icon"><i class="fas fa-running"></i></span>
+            </div>
+            <div class="range-info">Estimation: 220 - âge</div>
+        </div>
+        
+        <div class="form-group">
+            <label for="exang"><i class="fas fa-lungs"></i> Angine Induite par l'Exercice</label>
+            <div class="input-wrapper select-wrapper">
+                <select id="exang" name="exang" required>
+                    <option value="">Sélectionnez...</option>
+                    <option value="0">Non</option>
+                    <option value="1">Oui</option>
+                </select>
+                <span class="input-icon"><i class="fas fa-lungs"></i></span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label for="oldpeak"><i class="fas fa-chart-line"></i> Dépression ST Induite</label>
+        <div class="input-wrapper">
+            <input type="number" id="oldpeak" name="oldpeak" step="0.1"  required>
+            <span class="input-icon"><i class="fas fa-chart-line"></i></span>
+        </div>
+        <div class="range-info">Mesure en mV (0 = normal)</div>
+    </div>
+    
+    <div class="form-row">
+        <div class="form-group">
+            <label for="slope"><i class="fas fa-chart-area"></i> Pente du Segment ST</label>
+            <div class="input-wrapper select-wrapper">
+                <select id="slope" name="slope" required>
+                    <option value="">Sélectionnez...</option>
+                    <option value="0">Ascendante</option>
+                    <option value="1">Plate</option>
+                    <option value="2">Descendante</option>
+                </select>
+                <span class="input-icon"><i class="fas fa-chart-area"></i></span>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="ca"><i class="fas fa-vials"></i> Vaisseaux Colorés par Fluoroscopie</label>
+            <div class="input-wrapper select-wrapper">
+                <select id="ca" name="ca" required>
+                    <option value="">Sélectionnez...</option>
+                    <option value="0">0 vaisseau</option>
+                    <option value="1">1 vaisseau</option>
+                    <option value="2">2 vaisseaux</option>
+                    <option value="3">3 vaisseaux</option>
+                    <option value="4">4 vaisseaux</option>
+                </select>
+                <span class="input-icon"><i class="fas fa-vials"></i></span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label for="thal"><i class="fas fa-dna"></i> Résultat du Test Thalium</label>
+        <div class="input-wrapper select-wrapper">
+            <select id="thal" name="thal" required>
+                <option value="">Sélectionnez...</option>
+                <option value="1">Normal</option>
+                <option value="2">Défaut fixe</option>
+                <option value="3">Défaut réversible</option>
+            </select>
+            <span class="input-icon"><i class="fas fa-dna"></i></span>
+        </div>
+    </div>
+    
+    <button type="submit" class="btn-submit">
+        <i class="fas fa-stethoscope"></i> Analyser le Risque Cardiaque
+    </button>
+</form>
+            </div>
+            
+            <div class="info-card">
+                <h2 class="info-title"><i class="fas fa-info-circle"></i> Informations Importantes</h2>
+                <ul class="info-list">
+                    <li><i class="fas fa-check-circle"></i> Ce formulaire utilise un modèle de machine learning pour évaluer le risque de maladie cardiaque.</li>
+                    <li><i class="fas fa-check-circle"></i> Tous les champs sont requis pour une prédiction précise.</li>
+                    <li><i class="fas fa-check-circle"></i> Les valeurs doivent être basées sur des examens médicaux récents.</li>
+                    <li><i class="fas fa-check-circle"></i> Les résultats sont à titre informatif uniquement et ne remplacent pas un avis médical professionnel.</li>
+                    <li><i class="fas fa-check-circle"></i> Consultez toujours un professionnel de santé pour un diagnostic médical.</li>
+                    <li><i class="fas fa-check-circle"></i> Vos données sont traitées de manière sécurisée et ne sont pas stockées.</li>
+                </ul>
+                
+                <div style="margin-top: 40px; padding: 20px; background-color: rgba(255,255,255,0.1); border-radius: 8px;">
+                    <h3 style="margin-bottom: 10px;"><i class="fas fa-shield-alt"></i> Confidentialité</h3>
+                    <p>Vos données médicales sont traitées avec la plus stricte confidentialité. Aucune information personnelle n'est requise ni stockée.</p>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Système de prédiction de maladies cardiaques &copy; 2023 | À des fins éducatives et informatives</p>
+        </footer>
+    </div>
+    
+    <!-- <script>
+        // Ajout d'une validation simple pour les champs
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = document.querySelectorAll('input[type="number"]');
+            
+            inputs.forEach(input => {
+                // Afficher un aperçu de la valeur
+                input.addEventListener('input', function() {
+                    const min = parseInt(this.min) || 0;
+                    const max = parseInt(this.max) || 100;
+                    const value = parseInt(this.value) || 0;
+                    
+                    if (value < min) this.value = min;
+                    if (value > max) this.value = max;
+                });
+                
+                // Ajouter un effet visuel lors de la saisie
+                input.addEventListener('focus', function() {
+                    this.parentElement.style.transform = 'scale(1.02)';
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.parentElement.style.transform = 'scale(1)';
+                });
+            });
+            
+            // Animation pour le bouton de soumission
+            const submitBtn = document.querySelector('.btn-submit');
+            submitBtn.addEventListener('mouseenter', function() {
+                this.style.background = 'linear-gradient(to right, #c1121f, #a4161a)';
+            });
+            
+            submitBtn.addEventListener('mouseleave', function() {
+                this.style.background = 'linear-gradient(to right, var(--primary), var(--primary-dark))';
+            });
+        });
+    </script> -->
 </body>
 </html>
