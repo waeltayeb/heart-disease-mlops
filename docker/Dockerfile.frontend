@@ -1,0 +1,13 @@
+FROM python:3.10-slim
+
+WORKDIR /app
+
+COPY requirements-frontend.txt .
+RUN pip install --no-cache-dir -r requirements-frontend.txt
+
+COPY src ./src
+ENV PYTHONPATH=/app/src
+
+EXPOSE 8080
+
+CMD ["gunicorn", "-b", ":8080", "app:app"]

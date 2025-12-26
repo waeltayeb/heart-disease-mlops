@@ -1,15 +1,13 @@
 from flask import Flask, render_template, request
-import numpy as np
-import joblib
-from pathlib import Path
+import requests
+import os
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="templates")
 
-MODEL_PATH = Path("models/model.pkl")
-SCALER_PATH = Path("models/scaler.pkl")
-
-model = joblib.load(MODEL_PATH)
-scaler = joblib.load(SCALER_PATH)
+API_URL = os.environ.get(
+    "API_URL",
+    "https://heart-disease-api-412775386792.europe-west1.run.app/predict"
+)
 
 FEATURES = [
     "age", "sex", "cp", "trestbps", "chol", "fbs",
@@ -23,23 +21,22 @@ def home():
 
 @app.route("/predict", methods=["POST"])
 def predict():
-    data = []
-    for feature in FEATURES:
-        value = float(request.form[feature])
-        data.append(value)
+    payload = {f: float(request.form[f]) for f in FEATURES}
 
-    input_data = np.array(data).reshape(1, -1)
-    input_scaled = scaler.transform(input_data)
+    response = requests.post(API_URL, json=payload)
 
-    prediction = model.predict(input_scaled)[0]
+    if response.status_code != 200:
+        return "Erreur API", 500
+
+    prediction = response.json()["prediction"]
 
     result = (
-        "Maladie cardiaque détectée"
-        if prediction == 0
+        "❌ Maladie cardiaque détectée"
+        if prediction == 1
         else "✅ Pas de maladie cardiaque"
     )
 
     return render_template("result.html", prediction=result)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=8080)
